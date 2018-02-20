@@ -4,7 +4,7 @@
 <head>
 
 	<meta charset="UTF-8">
-	<title>Hey, are you hungry?</title>
+	<title>Will you tame me? Yes, I do.</title>
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
 	<link rel="stylesheet" href="css/flipclock.css">
@@ -72,8 +72,31 @@
 	
 	<div id="contractWindow" class="jumbotron" style="display:none; position: absolute; left: 5%; top: 20%; z-index: 999; opacity:0.95;">
 		<div class="container">
-			<h1 style="text-align : center">Hello, world!</h1>
-			<p>...</p>
+			<h2 style="text-align : center">用户协议</h2>
+			<h3>特别提示</h3>
+			<p>Haifeng.Zhu（以下简称“Haifeng”）在此特别提醒您（Linyun.Hu）在申请和确认成为用户之前，请认真阅读本《用户协议》（以下简称“协议”），确保您充分理解本协议中各条款。请您审慎阅读并选择接受或不接受本协议。除非您接受本协议所有条款，否则您无权注册、登录或使用本协议所涉服务。您的注册、登录、使用等行为将视为对本协议的接受，并同意接受本协议各项条款的约束。</p>
+			<p>本协议约定Haifeng与Linyun之间关于“生活”社会服务（以下简称“服务”）的权利义务。本协议可由Haifeng随时更新，更新后的协议条款一旦公布即代替原来的协议条款，恕不再另行通知，Linyun不可在本网站查阅最新版协议条款。在Haifeng修改协议条款后，如果Linyun不接受修改后的条款，请继续忍耐并持续提供更加优质的服务，Linyun不管继续或不继续提供之前的社会服务都将被视为接受修改后的协议。</p>
+			<br/>
+			<h3>1.服务内容</h3>
+			<p>1). 包吃</p>
+			<p>2). 包住</p>
+			<p>3). 包happy</p>
+			<br/>
+			<h3>2.内容规范</h3>
+			<p>1). 保质</p>
+			<p>2). 保量</p>
+			<p>3). 保持续</p>
+			<br/>
+			<h3>3.使用规则</h3>
+			<p>1). 凡是Haifeng说的都坚决支持</p>
+			<p>2). 凡是Haifeng说的都坚决执行</p>
+			<br/>
+			<h3>4.不可抗力及其他免责事由</h3>
+			<p>无</p>
+			<br/>
+			<h3>5.其他</h3>
+			<p style="font-size:smaller; font-style:italic; color:#a29595;">本协议最终解释权由Linyun拥有</p>
+			<br/>
 			<p style="text-align : right">
 				<a class="btn btn-sucess btn-lg" onclick="cancelSign()" role="button">残忍拒绝</a>
 				<a class="btn btn-primary btn-lg" onclick="signContract()" role="button">欣然同意</a>
@@ -252,14 +275,20 @@
 					alert("你就这么狠心取消？");
 					break;
 				case 3: 
-					alert("再仔细考虑一下嘛，别取消了");
+					alert("再仔细考虑一下嘛，别取消了嘛~");
+					break;
+				case 4: 
+					alert("万水千山总是情，同意一下行不行？");
+					break;
+				case 5: 
+					alert("我拿青春赌明日，能同意一日算一日？");
 					break;
 				default:
 					alert("不行，不管，就是不能取消");
 					break;
 			}
 			msgType = msgType + 1;
-			if ( msgType>=10 ){
+			if ( msgType>=9 ){
 				msgType = 1;
 			}
 		}
@@ -339,7 +368,7 @@
 				+ 'But if you tame me, then we shall need each other. To me, you will be unique in all the world. '
 				+ 'To you, I shall be unique in all the world...\"',
 				{
-					e: 0.01, // error rate. (use e=0 for perfect typing)
+					e: 0.04, // error rate. (use e=0 for perfect typing)
 					t: 50, // interval between keypresses
 					callback: function (){
 						$("#mainMessageP2").typetype(
@@ -348,13 +377,13 @@
 							+ '\"It will be as if the sun came to shine on my life. I shall know the sound of a step that will be different from all the others. '
 							+ 'Other steps send me hurrying back underneath the ground. Yours will call me, like music, out of my burrow.\"',
 							{
-								e: 0.01, // error rate. (use e=0 for perfect typing)
+								e: 0.03, // error rate. (use e=0 for perfect typing)
 								t: 50,
 								callback: function (){
 									$("#mainMessageP3").typetype(
 										'I do not know what future likes, but I am sure about that I will never leave the earth. ',
 										{
-											e: 0, // error rate. (use e=0 for perfect typing)
+											e: 0.02, // error rate. (use e=0 for perfect typing)
 											t: 50,
 											callback: function (){
 												$("#mainMessageP4").typetype(
