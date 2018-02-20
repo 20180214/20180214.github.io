@@ -174,6 +174,10 @@
 		}
 		
 		function getPassedSecond(){
+			if ( infoMap.get("signFlag")==false ){
+				return 0;
+			}
+			
 			let startTimeStamp = infoMap.get("signTimeStamp");
 			let currentTimeStamp = (new Date()).getTime();
 			let passedSeconds = Math.ceil((currentTimeStamp - startTimeStamp)/1000);	// unit: second
