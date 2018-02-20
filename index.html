@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta charset="UTF-8">
+	<title>Hey, are you hungry?</title>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
+	<link rel="stylesheet" href="css/flipclock.css">
+	<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+	<script src="js/flipclock.js"></script>
+	<script src="js/bmob-min.js"></script>
+	<script src="js/jquery.typetype.min.js"></script>
+	
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+</head>
+
+<body>
+	<div id="info"> </div>
+	<div class="clock" style="margin: 10% 0px 0 25%; width:75%"></div>
+	<div class="component">
+		<ul class="align">
+			<li>
+				<figure class='book'>
+					<ul class='hardcover_front'>
+						<li>
+							<div class="coverDesign blue">
+								<h1>Will you?</h1>
+								<p>from me</p>
+							</div>
+						</li>
+						<li></li>
+					</ul>
+
+					<!-- Pages -->
+
+					<ul class='page'>
+						<li></li>
+						<li>
+							<a class="btn" onclick="showDetails()" >Yes, I do</a>
+						</li>
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+
+					<!-- Back -->
+
+					<ul class='hardcover_back'>
+						<li></li>
+						<li></li>
+					</ul>
+					<ul class='book_spine'>
+						<li></li>
+						<li></li>
+					</ul>
+					<figcaption>
+						<h1>Will you tame me?</h1>
+						<span>A new message from me</span>
+						<p>Think how wonderful that will be when you have tamed me! The grain, which is also golden, will bring me back the thought of you. And I shall love to listen to the wind in the wheat...</p>
+					</figcaption>
+				</figure>
+			</li>
+		</ul>
+	</div>
+	
+	<div id="contractWindow" class="jumbotron" style="display:none; position: absolute; left: 5%; top: 20%; z-index: 999; opacity:0.95;">
+		<div class="container">
+			<h1 style="text-align : center">Hello, world!</h1>
+			<p>...</p>
+			<p style="text-align : right">
+				<a class="btn btn-sucess btn-lg" onclick="cancelSign()" role="button">残忍拒绝</a>
+				<a class="btn btn-primary btn-lg" onclick="signContract()" role="button">欣然同意</a>
+			</p>
+		</div>
+	</div>
+	
+	<div id="imgBackWindow" style="background-color:white; display:none; position: absolute; left: 0; top: 0; z-index: 998; opacity:0.3; width:100%; height:120%">
+		<div style="background-image:url(img/fox.jpg); width:100%; height:100%; margin:0; opacity:1; background-repeat: no-repeat; background-position:center; z-index: 999;">
+		</div>	
+	</div>
+	
+	<div id="imgFrontWindow" style="display:none; position: absolute; left: 0; top: 0; opacity:1; z-index: 1998; width:100%; height:120%">
+		<div style="width:100%; height:100%; margin:0; opacity:1; z-index: 1999;">
+			<div style="padding: 7% 0 0 20%; width:80%">
+				<h2 id="titleMessage"></h2>
+				<br/>
+				<p id="mainMessageP1"></p>
+				<p id="mainMessageP2"></p>
+				<p id="mainMessageP3"></p>
+				<p id="mainMessageP4"></p>
+				<p id="mainMessageP5"></p>
+				<br/>
+				<p id="endMessageP1"></p>
+				<br/>
+				<br/>
+				<p id="endMessageP2" style="float:right;"></p>
+			<div>
+		</div>	
+	</div>
+	
+	
+	
+	
+	<script type="text/javascript">
+		// bmob info
+		Bmob.initialize("2eabdde2ca21786263c2b11370d48e7a", "4503de172c9a3ef1d735fe77b0c8b186");
+		var ConfigObject = Bmob.Object.extend("config");
+		
+		// site info 
+		var id = "L6pZ111A";
+		var infoMap = new Map();
+		infoMap.set("signFlag", false);
+		infoMap.set("signTimeStamp", 1518710400000);		// "2018-02-16 00:00:00"
+		infoMap.set("signContext", "Yes, I do");
+		
+		// clock info
+		var clock;
+		
+		// show message info 
+		var msgType = 1;
+		
+		// main interface
+		$(document).ready(function() {
+			isShowContract(false);
+			getInfoAndStart();
+		});
+		
+		function initialClock(passedSeconds){
+			clock = $('.clock').FlipClock(passedSeconds, {
+		        clockFace: 'DailyCounter',
+		        autoStart: false,
+		        callbacks: {
+		        	stop: function() {
+		        		$('.message').html('The clock has stopped!')
+		        	}
+		        }
+		    });
+				   
+		    clock.setCountdown(false);
+			
+			if ( infoMap.get("signFlag")==true ){
+				clock.start();
+			}
+		}
+		
+		function getPassedSecond(){
+			let startTimeStamp = infoMap.get("signTimeStamp");
+			let currentTimeStamp = (new Date()).getTime();
+			let passedSeconds = Math.ceil((currentTimeStamp - startTimeStamp)/1000);	// unit: second
+			
+			return passedSeconds;
+		}
+		
+		function getInfoAndStart(){
+			var query = new Bmob.Query(ConfigObject);
+			query.get(id, {
+			  success: function(object) {
+				// The object was retrieved successfully.
+				infoMap.set("signFlag", object.get("signFlag"));
+				infoMap.set("signTimeStamp", object.get("signTimeStamp"));
+				infoMap.set("signContext", object.get("signContext"));
+				
+				// todo : do the initial
+				initialClock(getPassedSecond());
+			  },
+			  error: function(object, error) {
+				alert("query object fail : " + error);
+			  }
+			});
+		}
+		
+		function updateInfoAndStart(){
+			var query = new Bmob.Query(ConfigObject);
+			query.get("L6pZ111A", {
+			  success: function(object) {
+			  
+				infoMap.set("signFlag", true);
+				infoMap.set("signTimeStamp", (new Date()).getTime());
+				infoMap.set("signContext", "Yes, I do");
+				
+				object.set("signFlag", infoMap.get("signFlag"));
+				object.set("signTimeStamp", infoMap.get("signTimeStamp"));
+				object.set("signContext", infoMap.get("signContext"));
+				
+				object.save(null, {
+				  success: function(object) {
+					// do initial
+					initialClock(0);
+					isShowContract(false);
+				  },
+				  error: function(model, error) {
+					alert("modify fail");
+				  }
+				});
+			  },
+			  error: function(object, error) {
+				alert("query object fail : " + error);
+			  }
+			});
+		}
+		
+		function addInfo(){
+			var config = new ConfigObject();
+			config.set("signFlag", true);
+			config.save(null, {
+			  success: function(object) {
+				alert("create object success, object id:"+object.id);
+			  },
+			  error: function(model, error) {
+				alert("create object fail");
+			  }
+			});
+		}
+		
+		function convertDateFromString(dateString) { 
+			if (dateString) { 
+				var arr1 = dateString.split(" "); 
+				var sdate = arr1[0].split('-'); 
+				var date = new Date(sdate[0], sdate[1]-1, sdate[2]); 
+				return date;
+			} 
+		}
+		
+		function showDetails(){
+			var isSigned = infoMap.get("signFlag");
+			
+			// not signed should show the sign info and update the info 
+			if ( !isSigned ) {
+				isShowContract(true);
+			}
+			// if signed, should show the details info 
+			else {
+				// show the details
+				isShowContract(false);
+				showImgWindow();
+			}
+		}
+		
+		function cancelSign(){
+			switch(msgType){
+				case 1:
+					alert("你真的忍心取消吗？");
+					break;
+				case 2: 
+					alert("你就这么狠心取消？");
+					break;
+				case 3: 
+					alert("再仔细考虑一下嘛，别取消了");
+					break;
+				default:
+					alert("不行，不管，就是不能取消");
+					break;
+			}
+			msgType = msgType + 1;
+			if ( msgType>=10 ){
+				msgType = 1;
+			}
+		}
+		
+		function signContract(){
+			updateInfoAndStart();
+			
+			// initial the details
+			// currently nothing to do with the details
+			
+		}
+		
+		function isShowContract(isShow){
+			if ( isShow ){
+				$("#contractWindow").show();
+			} else {
+				$("#contractWindow").hide();
+			}
+		}
+		
+		function showImgWindow(){
+			$("#imgBackWindow").show(10);
+			$("#imgFrontWindow").show(10);
+			$(".clock").hide();
+			$(".component").hide();
+			
+			typeTitleMessage();
+		}
+		
+		function closeImgWindow(){
+			$("#imgBackWindow").hide(100);
+			$("#imgFrontWindow").hide(100);
+			$(".clock").show();
+			$(".component").show();
+			
+			$("#titleMessage").html("");
+			$("#mainMessageP1").html("");
+			$("#mainMessageP2").html("");
+			$("#mainMessageP3").html("");
+			$("#mainMessageP4").html("");
+			$("#mainMessageP5").html("");
+			$("#endMessageP1").html("");
+			$("#endMessageP2").html("");
+		}
+		
+		function typeTitleMessage(){
+			$("#titleMessage").typetype(
+				'Hello Miss',
+				{
+					e: 0, // error rate. (use e=0 for perfect typing)
+					t: 100 // interval between keypresses
+				}
+			).backspace(4).delay(1000).typetype(
+				'Mrs', 
+				{
+					e: 0, // error rate. (use e=0 for perfect typing)
+					t: 100 // interval between keypresses
+				})
+			.backspace(10).typetype(
+				'To my dear Yun: ',
+				{
+					e: 0, // error rate. (use e=0 for perfect typing)
+					t: 100, // interval between keypresses
+					callback: function (){
+					  // the `this` keyword is bound to the particular element.
+					  typeMainMessage();
+					}
+				}
+			);
+		}
+		
+		function typeMainMessage(){
+			$("#mainMessageP1").typetype(
+				'\"To me, you are still nothing more than a little boy who is just like a hundred thousand other little boys. '
+				+ 'And I have no need of you. And you, on your part, have no need of me. '
+				+ 'To you, I am nothing more than a fox like a hundred thousand other foxes. '
+				+ 'But if you tame me, then we shall need each other. To me, you will be unique in all the world. '
+				+ 'To you, I shall be unique in all the world...\"',
+				{
+					e: 0.01, // error rate. (use e=0 for perfect typing)
+					t: 50, // interval between keypresses
+					callback: function (){
+						$("#mainMessageP2").typetype(
+							'I am just a normal boy like others, though you are the fox and the rose at the same time. '
+							+ 'I have no idea how to express my feeling, but following quotation is the best way to express my feeling: '
+							+ '\"It will be as if the sun came to shine on my life. I shall know the sound of a step that will be different from all the others. '
+							+ 'Other steps send me hurrying back underneath the ground. Yours will call me, like music, out of my burrow.\"',
+							{
+								e: 0.01, // error rate. (use e=0 for perfect typing)
+								t: 50,
+								callback: function (){
+									$("#mainMessageP3").typetype(
+										'I do not know what future likes, but I am sure about that I will never leave the earth. ',
+										{
+											e: 0, // error rate. (use e=0 for perfect typing)
+											t: 50,
+											callback: function (){
+												$("#mainMessageP4").typetype(
+													'Please-- tame me! ',
+													{
+														e: 0, // error rate. (use e=0 for perfect typing)
+														t: 100,
+														callback: function (){
+															$("#mainMessageP5").typetype(
+																'And let me know the meaning of word: '
+																+ '\"It is only with the heart that one can see rightly; what is essential is invisible to the eye.\"',
+																{
+																	e: 0, // error rate. (use e=0 for perfect typing)
+																	t: 100,
+																	callback: function (){
+																		typeEndMessage();
+																	}
+																}
+															);
+														}
+													}
+												);
+											}
+										}
+									);
+								}
+							}
+						)
+					}
+				}
+			);
+		}
+		
+		function typeEndMessage(){
+			$("#endMessageP1").typetype(
+				'So it is the end of this story', 
+				{
+					e: 0.04, // error rate. (use e=0 for perfect typing)
+					t: 100 // interval between keypresses
+				}
+			).backspace(30).delay(2000).typetype(
+				'This is just the begining of the story, to be continued...',
+				{
+					e: 0, // error rate. (use e=0 for perfect typing)
+					t: 100, // interval between keypresses
+					callback: function (){
+					  // the `this` keyword is bound to the particular element.
+					  $("#endMessageP2").typetype(
+						'From Haifeng.Zhu',
+						{
+							e: 0, // error rate. (use e=0 for perfect typing)
+							t: 100, // interval between keypresses
+							callback: function (){
+							}
+						}
+					  );
+					}
+				}
+			);
+		}
+	</script>
+</body>
+
+</html>
