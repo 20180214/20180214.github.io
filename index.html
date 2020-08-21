@@ -139,8 +139,8 @@
 		// site info 
 		var id = "L6pZ111A";
 		var infoMap = new Map();
-		infoMap.set("signFlag", false);
-		infoMap.set("signTimeStamp", 1518710400000);		// "2018-02-16 00:00:00"
+		infoMap.set("signFlag", true);
+		infoMap.set("signTimeStamp", 1518585240000);		// "2018-02-14 13:14:00"
 		infoMap.set("signContext", "Yes, I do");
 		
 		// clock info
@@ -152,7 +152,8 @@
 		// main interface
 		$(document).ready(function() {
 			isShowContract(false);
-			getInfoAndStart();
+			initialClock(getPassedSecond());
+			//getInfoAndStart();
 		});
 		
 		function initialClock(passedSeconds){
